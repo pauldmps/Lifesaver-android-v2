@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.paulshantanu.lifesaver.database.DBConstants;
 import com.paulshantanu.lifesaver.database.DBHelper;
@@ -18,7 +19,11 @@ import com.paulshantanu.lifesaver.database.DBHelper;
 
 public class UserProvider extends ContentProvider {
 
-    DBHelper helper;
+    private static final String TAG = "UserProvider";
+
+    private DBHelper helper;
+    private SQLiteDatabase database;
+
     private static final String AUTHORITY = "com.paulshantanu.lifesaver.UserListProvider";
     public static final String USERS_BASE_PATH = "users";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + USERS_BASE_PATH);
@@ -28,7 +33,6 @@ public class UserProvider extends ContentProvider {
 
     private static final UriMatcher URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-    private SQLiteDatabase database;
 
     static {
         URI_MATCHER.addURI(AUTHORITY, USERS_BASE_PATH, USERS);
@@ -37,18 +41,22 @@ public class UserProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        helper = new DBHelper(getContext());
-        //database = helper.getWritableDatabase();
+        helper = DBHelper.getInstance(getContext());
+        database = helper.getWritableDatabase();
+        Log.d(TAG,"OnCreate");
         return true;
     }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return database
+
+        Cursor cursor = database
                 .query(DBConstants.TABLE_NAME, DBConstants.ALL_COLUMNS,
                         selection,null,null,null,
                         DBConstants.COLUMN_TIMESTAMP_ADDED + " DESC");
+        Log.d(TAG,String.valueOf(cursor.getCount()));
+        return cursor;
     }
 
     @Nullable

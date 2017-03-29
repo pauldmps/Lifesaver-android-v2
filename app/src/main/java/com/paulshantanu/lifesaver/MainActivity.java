@@ -2,15 +2,26 @@ package com.paulshantanu.lifesaver;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.paulshantanu.lifesaver.Services.UserService;
+import com.paulshantanu.lifesaver.util.UserListAdapter;
+import com.paulshantanu.lifesaver.util.UserProvider;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>{
+
+    private UserListAdapter userListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
             startService(updateDataIntent);
         }
 
+        RecyclerView mainRecyclerView = (RecyclerView) findViewById(R.id.rv_main);
+        mainRecyclerView.setHasFixedSize(true);
+        mainRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        userListAdapter = new UserListAdapter(null);
+        mainRecyclerView.setAdapter(userListAdapter);
+
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -45,5 +64,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkConnectivity(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this, UserProvider.CONTENT_URI,
+                null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        userListAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        userListAdapter.swapCursor(null);
     }
 }
