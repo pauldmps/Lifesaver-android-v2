@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -23,13 +23,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"/>
         
         <provider
             android:authorities="com.paulshantanu.lifesaver.UserListProvider"
             android:name=".util.UserProvider"
             android:exported="false"/>
 
-        <service android:name=".Services.UserService"
+        <service android:name=".services.UserService"
             android:exported="false"/>
         
     </application>

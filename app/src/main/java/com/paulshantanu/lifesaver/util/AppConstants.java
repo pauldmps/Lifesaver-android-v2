@@ -6,4 +6,5 @@ package com.paulshantanu.lifesaver.util;
 
 public class AppConstants {
 
+
 }
