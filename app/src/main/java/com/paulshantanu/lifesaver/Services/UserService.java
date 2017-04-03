@@ -1,36 +1,24 @@
-package com.paulshantanu.lifesaver.Services;
+package com.paulshantanu.lifesaver.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.paulshantanu.lifesaver.database.DBConstants;
 import com.paulshantanu.lifesaver.models.User;
+import com.paulshantanu.lifesaver.util.APIResponseObject;
+import com.paulshantanu.lifesaver.util.ConnectionUtil;
 import com.paulshantanu.lifesaver.util.UserProvider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.Console;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Shantanu Paul on 3/23/2017.
@@ -42,6 +30,7 @@ public class UserService extends IntentService {
     private static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.JDJhJDA1JHF0SE9LQ1ZyRzg1NGVzUTFrSm85c3UuLnNFeFhZTFpoRlAuQ1Z3TGxqYkZHMzJoTnEzelNP." +
             "pQlxqfi2eLoDpPFb2RFYSk5Vu8WBaoIUKBkJ9jlDcVs"; //TODO Remove hardcoded token
     private String url = "https://lifesaver-api.herokuapp.com/auth/nearbyUsers";
+    public static final String BROADCAST_ACTION = "BroadcastAction";
 
     public UserService() {
         super(TAG);
@@ -55,55 +44,15 @@ public class UserService extends IntentService {
         map.put("token",TOKEN);
         map.put("maxDistance","100000");
 
-        try {
-            String postData = getPostDataString(map);
+        APIResponseObject responseObject = new ConnectionUtil(url,ConnectionUtil.METHOD_GET,map)
+                .getAPIResponse();
 
-            String method = "GET";
-            if("GET".equals(method)){
-                url = url + "?" + postData;
-            }
-
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-            urlConnection.setDoInput(true);
-            urlConnection.setChunkedStreamingMode(0);
-            urlConnection.setRequestMethod(method);
-
-            urlConnection.connect();
-
-            StringBuilder sb = new StringBuilder();
-
-            if("POST".equals(method)) {
-                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-                writer.write(postData);
-                writer.flush();
-                writer.close();
-                out.close();
-            }
-
-
-            urlConnection.connect();
-            int responseCode = urlConnection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-
-                parseJsonResponse(sb.toString());
-
-            }
-            Log.d(TAG,sb.toString());
-
-            Log.d(TAG,String.valueOf(responseCode));
+        if(responseObject.getResponseCode() == HttpURLConnection.HTTP_OK){
+            parseJsonResponse(responseObject.getResponse());
         }
-        catch (Exception ex){
-            Log.e(TAG, ex.getLocalizedMessage());
+        else{
+            //TODO - Error handling
         }
-
     }
 
     private void parseJsonResponse(String response) {
@@ -126,25 +75,12 @@ public class UserService extends IntentService {
             getContentResolver().insert(UserProvider.CONTENT_URI,values);
         }
         Log.d(TAG,"saveToDB");
+        Intent broadcastIntent = new Intent(BROADCAST_ACTION);
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getApplicationContext());
+        manager.sendBroadcast(broadcastIntent);
     }
 
 
 
-    private String getPostDataString(HashMap<String,String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
 
-        Iterator itr = params.entrySet().iterator();
-        while (itr.hasNext()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-            Map.Entry pair = (Map.Entry)itr.next();
-            result.append(URLEncoder.encode(pair.getKey().toString(),"UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(pair.getValue().toString(), "UTF-8"));
-        }
-        return result.toString();
-    }
 }

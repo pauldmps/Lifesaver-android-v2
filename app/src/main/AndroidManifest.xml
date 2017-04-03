@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.paulshantanu.lifesaver">
-    
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -14,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -23,17 +25,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"/>
-        
-        <provider
-            android:authorities="com.paulshantanu.lifesaver.UserListProvider"
-            android:name=".util.UserProvider"
-            android:exported="false"/>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity"/>
 
-        <service android:name=".services.UserService"
-            android:exported="false"/>
-        
+        <provider
+            android:name=".util.UserProvider"
+            android:authorities="com.paulshantanu.lifesaver.UserListProvider"
+            android:exported="false" />
+
+        <service
+            android:name=".services.UserService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

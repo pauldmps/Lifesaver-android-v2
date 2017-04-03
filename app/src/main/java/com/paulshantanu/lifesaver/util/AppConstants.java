@@ -6,5 +6,5 @@ package com.paulshantanu.lifesaver.util;
 
 public class AppConstants {
 
-
+public static final String GOOGLE_MAPS_API_KEY = "AIzaSyD8BTPmNwiZUETJF2jTSZnqUw-awuFYOV4";
 }

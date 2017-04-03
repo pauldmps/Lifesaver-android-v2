@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/register_pic_layout"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"/>
+
+        <android.support.v7.widget.AppCompatSeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/register_name"
+                android:hint="Name"
+                android:inputType="textPersonName"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/register_email"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/register_password"
+                android:hint="Create Password"
+                android:inputType="textPassword"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/register_confirm_password"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/btn_register_confirm"
+            android:text="Register"/>
+
+    </LinearLayout>
+
+</LinearLayout>
